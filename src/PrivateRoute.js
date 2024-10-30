@@ -7,7 +7,7 @@ const PrivateRoute = ({ children }) => {
 
   // Jika token tidak ada, arahkan ke halaman login
   if (!token) {
-    return <Navigate to="/login" />;
+    // return <Navigate to="/login" />;
   }
 
   // Jika token ada, izinkan akses ke halaman yang diminta

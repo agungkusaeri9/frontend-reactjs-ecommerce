@@ -1,101 +1,119 @@
-import axios from "axios";
-import { Button, Label, TextInput } from "flowbite-react";
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { setToken } from "../../authSlice";
-
-import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
+import AuthLayout from "../../layouts/AuthLayout";
+import { CgQr } from "react-icons/cg";
+import { RxEyeClosed } from "react-icons/rx";
+import { FaEye, FaFacebook, FaGoogle } from "react-icons/fa";
 
 function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState({});
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post(
-        "http://localhost:8000/api/auth/login",
-        {
-          email,
-          password,
-        }
-      );
+  const [isPasswordHidden, setIsPasswordHidden] = useState(true);
 
-      if (response.data.meta.status === "success") {
-        Swal.fire({
-          title: "success!",
-          text: response.data.meta.message,
-          icon: response.data.meta.status,
-        });
-      }
-
-      const accessToken = response.data.data.access_token;
-
-      // Simpan token ke state menggunakan Redux
-      dispatch(setToken(accessToken));
-      navigate("/");
-    } catch (error) {
-      if (error.response.data.meta.code == 401) {
-        Swal.fire({
-          title: "error!",
-          text: error.response.data.meta.message,
-          icon: error.response.data.meta.status,
-        });
-      }
-      if (error.response && error.response.data.errors) {
-        // Handle validation errors from Laravel API
-        setErrors(error.response.data.errors);
-      } else {
-        // Handle other types of errors
-        console.error("An unexpected error occurred:", error);
-      }
+  const HandleShowPassword = (action) => {
+    if (action == "hide") {
+      setIsPasswordHidden(true);
+    } else {
+      setIsPasswordHidden(false);
     }
   };
 
   return (
-    <div class="bg-gray-100 flex items-center justify-center h-screen ">
-      <div className="w-1/2 border border-gray-700 px-20 py-10 rounded-lg">
-        <h2 className="text-2xl text-center mb-10">Login Page</h2>
-        <form onSubmit={handleSubmit}>
-          <div>
-            <div className="mb-2 block">
-              <Label htmlFor="email" value="Your email" />
+    <AuthLayout>
+      <div className="bg-gray-200 h-[740px]">
+        <div className="max-w-screen-lg mx-auto ">
+          <div className="bg-white w-[600px] float-right mt-10 py-10 px-8">
+            <div className="items-center flex justify-between rounded-lg">
+              {/* form login */}
+              <div className="">
+                <div className="text-2xl">Log In</div>
+              </div>
+              <div className="flex gap-5 items-center">
+                <div className="text-sm border border-[rgb(255, 191, 0)] bg-[rgb(254, 250, 236)] p-3">
+                  Login Dengan Qr
+                </div>
+                <div>
+                  <CgQr className="cursor-pointer" />
+                </div>
+              </div>
             </div>
-            <TextInput
-              id="email"
-              type="email"
-              placeholder="mail@gmail.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            {errors.email && (
-              <p classemail="text-red-500 text-xs mt-1">{errors.email}</p>
-            )}
-          </div>
-          <div>
-            <div className="mb-2 block">
-              <Label htmlFor="password" value="Your password" />
+            <div className="my-5">
+              <form action="" method="">
+                <div className="mb-6">
+                  <input
+                    type="text"
+                    id="email"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 rounded-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-16 text-lg"
+                    placeholder="No. Handphone/Username/Email"
+                    required
+                  />
+                </div>
+                <div className="relative">
+                  <input
+                    type={isPasswordHidden ? "password" : "text"}
+                    id="password"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 rounded-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 h-16 text-lg"
+                    placeholder="Password"
+                    required
+                  />
+                  <div className="absolute top-5 right-5 cursor-pointer">
+                    {isPasswordHidden ? (
+                      <RxEyeClosed onClick={() => HandleShowPassword("show")} />
+                    ) : (
+                      <FaEye onClick={() => HandleShowPassword("hide")} />
+                    )}
+                  </div>
+                </div>
+                <div className="mt-10">
+                  <button className="bg-red-700 w-full p-5 text-lg text-white hover:bg-red-600">
+                    LOG IN
+                  </button>
+                </div>
+              </form>
+              <div className="flex justify-between mt-5">
+                <a href="" className="text-blue-600">
+                  Lupa Password
+                </a>
+                <a href="" className="text-blue-600">
+                  Login dengan no. Handphone
+                </a>
+              </div>
+              <div className="flex mt-5 justify-between items-center gap-5">
+                <div className="border-b-2 w-full"></div>
+                <p className="text-slate-600">ATAU</p>
+                <div className="border-b-2 w-full"></div>
+              </div>
+              <div className="flex justify-between gap-5 mt-5">
+                <a
+                  href=""
+                  className="flex bg-white hover:bg-slate-100 items-center justify-center border p-5 w-full gap-2"
+                >
+                  <div>
+                    <FaFacebook className="text-blue-600" />
+                  </div>
+                  <p>Facebook</p>
+                </a>
+                <a
+                  href=""
+                  className="flex bg-white hover:bg-slate-100 items-center justify-center border p-5 w-full gap-2"
+                >
+                  <div>
+                    <FaGoogle className="text-red-600" />
+                  </div>
+                  <p>Facebook</p>
+                </a>
+              </div>
+
+              <div className="text-center text-lg mt-5">
+                <p>
+                  Baru Di Shopee?
+                  <a href="" className="text-red-500 ml-2">
+                    Daftar
+                  </a>
+                </p>
+              </div>
             </div>
-            <TextInput
-              id="password"
-              type="password"
-              placeholder="*********"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            {errors.password && (
-              <p classpassword="text-red-500 text-xs mt-1">{errors.password}</p>
-            )}
           </div>
-          <Button type="submit" className="mt-4 w-full">
-            Login
-          </Button>
-        </form>
+        </div>
       </div>
-    </div>
+    </AuthLayout>
   );
 }
 
