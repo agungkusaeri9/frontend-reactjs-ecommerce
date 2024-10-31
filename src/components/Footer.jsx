@@ -31,10 +31,10 @@ function Footer() {
   ];
 
   return (
-    <footer className="bg-white py-16">
-      <div className="container mx-auto max-w-screen-lg flex gap-[50px]">
-        <div>
-          <h5 className="font-semibold mb-5">layanan Pelanggan</h5>
+    <footer className="bg-white py-16 px-4">
+      <div className="container mx-auto max-w-screen-lg md:flex gap-[50px]">
+        <div className="mb-10">
+          <h5 className="font-semibold mb-5 ">layanan Pelanggan</h5>
           <ul>
             <li className="mb-2">
               <a href="#" className="text-sm font-light">
@@ -88,8 +88,8 @@ function Footer() {
             </li>
           </ul>
         </div>
-        <div>
-          <h5 className="font-semibold mb-5">Jelajahi Shopee</h5>
+        <div className="mb-10">
+          <h5 className="font-semibold mb-5 ">Jelajahi Shopee</h5>
           <ul>
             <li className="mb-2">
               <a href="#" className="text-sm font-light">
@@ -143,8 +143,8 @@ function Footer() {
             </li>
           </ul>
         </div>
-        <div>
-          <h5 className="font-semibold mb-5">Pembayaran</h5>
+        <div className="mb-10">
+          <h5 className="font-semibold mb-5 ">Pembayaran</h5>
           <div className="grid grid-cols-3 gap-4">
             {data_pembayaran &&
               data_pembayaran.map((pembayaran, index) => {
@@ -158,7 +158,7 @@ function Footer() {
                 );
               })}
           </div>
-          <h5 className="font-semibold mb-5 mt-5">Pengiriman</h5>
+          <h5 className="font-semibold mb-5  mt-5">Pengiriman</h5>
           <div className="grid grid-cols-3 gap-4">
             {data_pengiriman &&
               data_pengiriman.map((pengiriman, index) => {
@@ -173,8 +173,8 @@ function Footer() {
               })}
           </div>
         </div>
-        <div>
-          <h5 className="font-semibold mb-5">Ikuti Kami</h5>
+        <div className="mb-10">
+          <h5 className="font-semibold mb-5 ">Ikuti Kami</h5>
           <ul>
             <li className="mb-2 flex items-center gap-2">
               <div>
@@ -207,11 +207,11 @@ function Footer() {
               <div className="text-sm">Kampus Shopee</div>
             </li>
           </ul>
-          <h5 className="font-semibold mb-5 mt-5">Keamanan</h5>
+          <h5 className="font-semibold mb-5  mt-5">Keamanan</h5>
           <img src="image/keamanan.png" alt="" />
         </div>
-        <div>
-          <h5 className="font-semibold mb-5">Download Aplikasi Shopee</h5>
+        <div className="mb-10">
+          <h5 className="font-semibold mb-5 ">Download Aplikasi Shopee</h5>
           <div className="flex items-center">
             <div>
               <img src="image/qrshopee.png" alt="" className="" />
