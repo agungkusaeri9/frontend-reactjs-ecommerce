@@ -1,12 +1,12 @@
 import React from "react";
-import NavbarComponent from "../components/NavbarComponent";
-import { Footer } from "flowbite-react";
+import NavbarMain from "../components/NavbarMain";
+import Footer from "../components/Footer";
 
 function MainLayout({ children }) {
   return (
-    <div>
-      <NavbarComponent />
-      <div>{children}</div>
+    <div className="bg-gray-100">
+      <NavbarMain />
+      <div className="container mx-auto py-10">{children}</div>
       <Footer />
     </div>
   );
