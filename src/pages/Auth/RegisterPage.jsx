@@ -7,6 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import LoginPage from "./LoginPage";
 import axios from "axios";
 import { Alert, Toast } from "flowbite-react";
+import authService from "./../../services/auth-service";
 
 function RegisterPage() {
   const [isPasswordHidden, setIsPasswordHidden] = useState(true);
@@ -60,12 +61,21 @@ function RegisterPage() {
         password_confirmation: form.password_confirmation,
       };
 
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/auth/register`,
-        payload
-      );
+      // const response = await axios.post(
+      //   `${import.meta.env.VITE_API_URL}/api/auth/register`,
+      //   payload
+      // );
 
-      if (response.status == 201) {
+      // if (response.status == 201) {
+      //   // munculkan toast react flowbit
+      //   setShowToast(true);
+      //   setTimeout(() => {
+      //     navigate("/login");
+      //   }, 1000);
+      // }
+
+      const result = await authService.register(payload);
+      if (result.data.data) {
         // munculkan toast react flowbit
         setShowToast(true);
         setTimeout(() => {

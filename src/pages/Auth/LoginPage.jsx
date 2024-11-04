@@ -5,6 +5,7 @@ import { RxEyeClosed } from "react-icons/rx";
 import { FaEye, FaFacebook, FaGoogle } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import authService from "./../../services/auth-service";
 
 function LoginPage() {
   const [isPasswordHidden, setIsPasswordHidden] = useState(true);
@@ -44,13 +45,17 @@ function LoginPage() {
         password: form.password,
       };
 
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/auth/login`,
-        payload
-      );
-      if (response.status == 200) {
-        const access_token = response.data.data.access_token;
-        localStorage.setItem("access_token", access_token);
+      // const response = await axios.post(
+      //   `${import.meta.env.VITE_API_URL}/api/auth/login`,
+      //   payload
+      // );
+      // if (response.status == 200) {
+      //   const access_token = response.data.data.access_token;
+      //   localStorage.setItem("access_token", access_token);
+      //   navigate("/");
+      // }
+      const result = await authService.login(payload);
+      if (result.data) {
         navigate("/");
       }
     } catch (error) {

@@ -1,19 +1,41 @@
 import { Navbar } from "flowbite-react";
 import IconReact from "../assets/react.svg";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaFacebook, FaInstagram, FaSearch } from "react-icons/fa";
+import {
+  FaCartArrowDown,
+  FaExchangeAlt,
+  FaFacebook,
+  FaHome,
+  FaInstagram,
+  FaSearch,
+  FaTags,
+  FaUser,
+} from "react-icons/fa";
 import { GiGraduateCap } from "react-icons/gi";
 import { BiCart, BiGlobe, BiInfoCircle, BiNotification } from "react-icons/bi";
 import { IoIosNotifications } from "react-icons/io";
+import authService from "./../services/auth-service";
 
 function NavbarMain() {
-  const token = localStorage.getItem("access_token");
-
+  const [user, setUser] = useState([]);
   const navigate = useNavigate();
   const handleLogout = () => {
     localStorage.removeItem("access_token");
     navigate("/");
+  };
+
+  useEffect(() => {
+    // fetchProfile();
+  }, []);
+
+  const fetchProfile = async () => {
+    try {
+      const result = await authService.profile();
+      setUser(result.data.data);
+    } catch (error) {
+      console.log(error.data);
+    }
   };
   return (
     <>
@@ -79,9 +101,11 @@ function NavbarMain() {
                 Bahasa Indonesia
               </Link>
             </div>
-            {token ? (
+            {user ? (
               <div className="flex gap-2 items-center">
-                <Link className="text-sm font-light text-white">Username</Link>
+                <Link className="text-sm font-light text-white">
+                  {user.name}
+                </Link>
               </div>
             ) : (
               <>
@@ -125,7 +149,7 @@ function NavbarMain() {
             />
           </div>
           <div className="hidden md:block">
-            <BiCart className="text-white h-10 w-10" />
+            <BiCart className="text-white h-10 w-10 cursor-pointer" />
           </div>
           <div className="md:hidden px-4">
             <div className="w-full relative">
@@ -141,6 +165,37 @@ function NavbarMain() {
                 <FaSearch />
               </button>
             </div>
+          </div>
+        </div>
+      </div>
+      <div className="fixed md:hidden w-full bg-white border border-slate-200 bottom-0 py-3">
+        <div className="flex justify-between px-10">
+          <div className="">
+            <Link to={"/"}>
+              <div className="text-center">
+                <FaHome />
+              </div>
+            </Link>
+          </div>
+          <div>
+            <Link to={"/products"}>
+              <FaTags />
+            </Link>
+          </div>
+          <div>
+            <Link to={"/cart"}>
+              <FaCartArrowDown />
+            </Link>
+          </div>
+          <div>
+            <Link to={"/transaction"}>
+              <FaExchangeAlt />
+            </Link>
+          </div>
+          <div>
+            <Link to={"/profile"}>
+              <FaUser />
+            </Link>
           </div>
         </div>
       </div>

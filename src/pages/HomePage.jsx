@@ -39,7 +39,6 @@ function HomePage() {
           }
         );
         if (response.data.meta.code == 200) {
-          console.log(response.data.data);
           setProducts(response.data.data);
         }
       } catch (error) {
