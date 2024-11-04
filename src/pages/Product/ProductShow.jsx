@@ -1,101 +1,128 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import MainLayout from "../../layouts/MainLayout";
 import { useParams } from "react-router-dom";
-import { Button, Checkbox, Label, TextInput, Textarea } from "flowbite-react";
-import Swal from "sweetalert2";
+import { formatRupiah } from "../../utils/FormatRupiah";
+import { TextInput } from "flowbite-react";
 
 function ProductShow() {
   const { slug } = useParams();
-  const [product, setproduct] = useState([]);
+  const [product, setProduct] = useState([]);
   const [qty, setQty] = useState(1);
+  const [image, setImage] = useState("");
 
-  const fetchProductBySlug = async () => {
+  const getProduct = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8000/api/products/` + slug
-      );
-      setproduct(response.data.data);
-    } catch (error) {}
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    try {
-      const response = await axios.post(
-        "http://localhost:8000/api/cart/add-to-cart",
-        {
-          product_id: product.id, // Pastikan ini adalah objek, bukan array
-          amount: qty,
-        },
-        {
-          headers: {
-            Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODAwMFwvYXBpXC9hdXRoXC9sb2dpbiIsImlhdCI6MTcyNjM0MTU0MiwiZXhwIjoxNzg2MzQxNDgyLCJuYmYiOjE3MjYzNDE1NDIsImp0aSI6IndGN3h4Ulh1M1lVZFFHMlkiLCJzdWIiOjIsInBydiI6Ijg3ZTBhZjFlZjlmZDE1ODEyZmRlYzk3MTUzYTE0ZTBiMDQ3NTQ2YWEifQ._uV2aqziIRlWWeqDlleRI95gfyl_nxHMzwEvbmiJbs0`,
-            "Content-Type": "application/json",
-          },
-        }
+        `${import.meta.env.VITE_API_URL}/api/products/${slug}`
       );
 
-      console.log("Item added to cart:", response.data);
-      Swal.fire({
-        title: "success!",
-        text: response.data.meta.message,
-        icon: response.data.meta.status,
-      });
+      if (response.status == 200) {
+        setProduct(response.data.data);
+        setImage(response.data.data.image);
+      }
     } catch (error) {
-      Swal.fire({
-        title: "Error!",
-        text: error.response.data.meta.message,
-        icon: "error",
-      });
+      console.log(error);
     }
   };
 
   useEffect(() => {
-    fetchProductBySlug(slug);
+    getProduct();
   }, []);
-  if (!product) {
-    return <div>Loading...</div>;
-  }
+
+  const handleQtyOnChange = (type, value) => {
+    const qtyCurrent = qty;
+    const qtyUpdate = qty;
+    if (type === "minus") {
+      if (qtyCurrent > 1) setQty(qtyCurrent - 1);
+    } else if (type === "plus") {
+      if (qtyCurrent < product.qty) setQty(qtyCurrent + 1);
+    } else {
+      console.log("first");
+      if (qtyCurrent < product.qty) {
+        setQty(value);
+      } else {
+        setQty(product.qty);
+      }
+    }
+  };
+
+  const handleChangeImage = (image) => {
+    setImage(image);
+  };
+
   return (
-    <div className="px-20 mt-10">
-      <div className="flex gap-8">
-        {/* Kolom detail produk (kiri) */}
-        <div className="flex-1 min-w-[300px]">
-          <img
-            src={product.image}
-            className="w-full h-auto mb-4"
-            alt={product.name}
-          />
-
-          <p
-            className="text-lg mb-4"
-            dangerouslySetInnerHTML={{ __html: product.desc }}
-          ></p>
-        </div>
-
-        {/* Kolom Add To Cart (kanan) */}
-        <div className="flex-1 min-w-[300px]">
-          <div className="text-left">
-            <h1 className="text-2xl font-bold mb-4">{product.name}</h1>
-          </div>
-          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-            <div>
-              <div className="mb-2 block">
-                <Label htmlFor="Qty" value="Qty" />
+    <>
+      <MainLayout>
+        <section className="px-4 mx-4 bg-white py-5 rounded-md grid grid-cols-1 md:grid-cols-[40%_60%] gap-8">
+          {product && (
+            <>
+              <div>
+                <img
+                  src={image}
+                  className="h-80 md:h-[500px] w-full object-cover aspect-square"
+                  alt=""
+                />
+                <div className="columns-5 mt-5">
+                  {product.gallery &&
+                    product.gallery.map((gallery, index) => (
+                      <img
+                        src={gallery.photo}
+                        className="aspect-square object-cover border-2 hover:brightness-50 cursor-pointer"
+                        key={index}
+                        onClick={() => handleChangeImage(gallery.photo)}
+                      />
+                    ))}
+                </div>
               </div>
-              <TextInput
-                id="qty"
-                onChange={(e) => setQty(e.target.value)}
-                type="number"
-                value={qty}
-              />
-            </div>
+              <div>
+                <h1 className="text-2xl">{product.name}</h1>
+                <h5 className="my-2">{product.sold} Terjual</h5>
 
-            <Button type="submit">Add To Cart</Button>
-          </form>
-        </div>
-      </div>
-    </div>
+                <h2 className="text-3xl my-10">
+                  {formatRupiah(product.price)}
+                </h2>
+
+                <div className="flex items-center gap-5">
+                  <div className="text-sm md:text-xl font-light">Kuantitas</div>
+                  <div className="flex">
+                    <button
+                      className="border border-slate-300 border-t-1 border-l-1 border-b-1 border-r-0 px-3 hover:bg-slate-200"
+                      onClick={() => handleQtyOnChange("minus", null)}
+                    >
+                      -
+                    </button>
+                    <input
+                      type="text"
+                      className="border border-slate-300 w-14 md:w-20 text-center"
+                      value={qty}
+                      onChange={(e) => handleQtyOnChange("", e.target.value)}
+                    />
+                    <button
+                      className="border border-slate-300 border-t-1 border-l-0 border-b-1 border-r-1 px-3 hover:bg-slate-200"
+                      onClick={() => handleQtyOnChange("plus", null)}
+                    >
+                      +
+                    </button>
+                  </div>
+                  <div className="text-sm md:text-xl font-light">
+                    Tersisa {product.qty} buah
+                  </div>
+                </div>
+                <div className="flex gap-4 mt-10">
+                  <button className="text-sm border border-red-700 hover:border-red-500 hover:bg-red-200 text-red-700 px-4 w-full md:w-60 md:px-8 py-1 md:py-4">
+                    Masukkan keranjang
+                  </button>
+                  <button className="text-sm bg-red-700 hover:bg-red-500 px-4 w-full md:w-60 md:px-8 py-1 md:py-4 text-white">
+                    Beli Sekarang
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
+        </section>
+      </MainLayout>
+    </>
   );
 }
 

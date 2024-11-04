@@ -3,6 +3,7 @@ import NavbarMain from "../components/NavbarMain";
 import MainLayout from "../layouts/MainLayout";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import ProductCard from "../components/ProductCard";
 
 function HomePage() {
   const [categories, setCategories] = useState([]);
@@ -29,11 +30,17 @@ function HomePage() {
     const getProducts = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/products`
+          `${import.meta.env.VITE_API_URL}/api/products`,
+          {
+            params: {
+              limit: 12,
+              type: "best",
+            },
+          }
         );
         if (response.data.meta.code == 200) {
-          setProducts(response.data.data.data);
-          console.log(response.data.data.data);
+          console.log(response.data.data);
+          setProducts(response.data.data);
         }
       } catch (error) {
         console.log("error " + error);
@@ -73,26 +80,31 @@ function HomePage() {
             id="list-kategori"
           >
             <div className="mt-7">
-              <h1 className="uppercase text-xl px-4 font-normal">Kategori</h1>
+              <h1 className="uppercase text-sm md:text-xl md:px-4 font-normal">
+                Kategori
+              </h1>
             </div>
-            <div className="columns-10 mt-4">
+            <div className="columns-3 md:columns-10 mt-4">
               {isLoadingCategories ? (
                 <p>Loading categories...</p>
               ) : (
                 categories.map((category, index) => (
                   <div
                     key={index}
-                    className="flex align-middle justify-center p-1 hover:p-2"
+                    className="flex align-middle justify-center p-1 hover:p-2 hover:border"
                   >
-                    <Link to="" className="text-center">
+                    <Link
+                      to={`/products?category=${category.slug}`}
+                      className="text-center"
+                    >
                       <div className="flex justify-center pb-2">
                         <img
                           src={category.icon}
-                          className="h-20"
+                          className="h-8 md:h-20"
                           alt={category.name}
                         />
                       </div>
-                      <h3 className="text-center text-sm font-light">
+                      <h3 className="text-center text-[8px] md:text-sm font-light">
                         {category.name}
                       </h3>
                     </Link>
@@ -103,49 +115,31 @@ function HomePage() {
           </section>
 
           {/* list product terlaris */}
-          <section
-            className="bg-white pt-1 px-4 pb-10 mb-10"
-            id="list-kategori"
-          >
+          <section className="bg-white pt-1 px-4 pb-10" id="list-kategori">
             <div className="mt-7">
-              <h1 className="uppercase text-xl px-4 font-normal">
+              <h1 className="uppercase text-sm md:text-xl md:px-4 font-normal">
                 PRODUK TERLARIS
               </h1>
             </div>
-            <div className="columns-10 mt-4"></div>
-          </section>
-          {/* list products */}
-          <section className="bg-white pt-1 px-4 pb-10" id="list-kategori">
-            <div className="mt-7">
-              <h1 className="uppercase text-xl px-4 font-normal">
-                REKOMENDASI
-              </h1>
-            </div>
-            <div className="grid grid-cols-6 gap-3 mt-4 px-4">
+            <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mt-4 md:px-4">
               {isLoadingRecommend ? (
                 <p>Loading products</p>
               ) : (
                 products &&
                 products.map((product, index) => (
-                  <Link to="">
-                    <div
-                      className="border rounded-md hover:contrast-50 p-3"
-                      key={index}
-                    >
-                      <img src="/image/cart.svg" alt="" className="h-22" />
-                      <h2 className="uppercase mt-5 mb-10">
-                        {truncateString(product.name, 40)}
-                      </h2>
-                      <div className="flex items-center justify-between">
-                        <h2 className="text-base">
-                          {formatRupiah(product.price)}
-                        </h2>
-                        <span className="text-sm">{product.sold} Terjual</span>
-                      </div>
-                    </div>
+                  <Link to={`/product/${product.slug}`} key={index}>
+                    <ProductCard index={index} product={product} />
                   </Link>
                 ))
               )}
+            </div>
+            <div className="flex justify-center mt-10">
+              <Link
+                to={"/products"}
+                className="text-xs md:text-sm border px-4 md:px-8 py-4 hover:bg-slate-100 text-slate-700"
+              >
+                Lihat Lainnya
+              </Link>
             </div>
           </section>
         </div>
